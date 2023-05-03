@@ -1,7 +1,6 @@
 from pathlib import Path
-from dotenv import load_dotenv
-load_dotenv()
 import os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,14 +10,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = 'django-insecure-=3_q68zs&2gt%tf%4y+(aav++y98nx9@rgeqcwt*ld9($_!8wv'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get('DEBUG', default=1))
+DEBUG = True
 
-PRODUCTION = int(os.environ.get('PRODUCTION', default=0))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1','michelnasri.pythonanywhere.com']
 
 
 # Application definition
@@ -31,7 +29,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
-    'rest_framework',
+    'rest_framework',    
+    'rest_framework.authtoken',
+    'appointment',
 ]
 
 MIDDLEWARE = [
@@ -49,7 +49,7 @@ ROOT_URLCONF = 'growtogether.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -106,13 +106,53 @@ USE_I18N = True
 
 USE_TZ = True
 
+USE_L10N = True
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+
+STATIC_URL = '/static/'
+
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'staticfiles')]
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+# STATICFILES_STORAGE="whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+REST_FRAMEWORK= {
+    # 'DEFAULT_PERMISSION_CLASSES':[],
+    # 'EXCEPTION_HANDLER': 'my_project.my_app.utils.custom_exception_handler',
+    
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+       
+    )
+}
+
+
+AUTH_USER_MODEL = 'users.User'
+
+# Email settings
+
+EMAIL_USE_TLS= True
+EMAIL_HOST= 'smtp.gmail.com'
+EMAIL_PORT= 587
+EMAIL_HOST_USER= 'ndialbert45@gmail.com'
+EMAIL_HOST_PASSWORD= 'vvwutvhyfcuulkum'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

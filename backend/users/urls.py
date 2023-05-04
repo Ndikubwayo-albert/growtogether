@@ -1,6 +1,6 @@
 from django.urls import path, include
 from .views import (UserRegister, VerifyAccount, ChangePasswordApi, LoginApi, LogoutApi, RequestResetPasswordEmail,
-                    PasswordCheckTokenApi, SetNewPasswordApi,)
+                    PasswordCheckTokenApi, SetNewPasswordApi, WomanProfileAPIView)
 
 from rest_framework.routers import DefaultRouter
 
@@ -22,7 +22,7 @@ urlpatterns = [
     path('accounts/resetpassword/', SetNewPasswordApi.as_view(), name='password-reset-done'),
     
     # for woman_info
-    path('accounts/womaninfo/', SetNewPasswordApi.as_view(), name='password-reset-done'),
+    path('accounts/womanprofile/', WomanProfileAPIView.as_view() ),
 
     
 ]

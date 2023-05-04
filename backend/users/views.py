@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, status, generics, viewsets
 from rest_framework.views import APIView
 from auto_tasks.auto_generate import auto_username_password_generator
-from .models import User
+from .models import User, Woman_profile
 
 from rest_framework.authtoken.models import Token
 from django.utils.encoding import smart_str, force_bytes,force_str, DjangoUnicodeDecodeError
@@ -207,5 +207,17 @@ class SetNewPasswordApi(generics.GenericAPIView):
         return Response({'Success': True, 'Message':'Password reset successfully'}, status= status.HTTP_200_OK)  
                         
         
-class WomanProfileViewset(viewsets.ModelViewSet):
-     serializer_class= WomanProfileSerializer
+class WomanProfileAPIView(APIView):
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, request, format=None):
+        profile = Woman_profile.objects.all()
+        serializer= WomanProfileSerializer(profile, many= True)
+        return Response(serializer.data)
+        
+    def post(self, request, format=None):
+        serializer = WomanProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

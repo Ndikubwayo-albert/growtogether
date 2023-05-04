@@ -48,16 +48,16 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-class Woman_info(models.Model):
+class Woman_profile(models.Model):
     PREGNANCY_STATUS_CHOICE=[
-        ('Pregnant','P'),
-        ('NotPregnant','N')
+        ('Pregnant','yes'),
+        ('Not Pregnant','no')
     ]
     user_id= models.ForeignKey(User, on_delete= models.CASCADE)    
     pregnant_times= models.IntegerField()
     children= models.IntegerField()
-    pregnant_date= models.DateTimeField()
-    expected_birth= models.DateTimeField()
+    pregnant_date= models.DateField()
+    expected_birth= models.DateField()
     pregnancy_status= models.CharField(max_length= 64, choices= PREGNANCY_STATUS_CHOICE)
 
     def __str__(self):

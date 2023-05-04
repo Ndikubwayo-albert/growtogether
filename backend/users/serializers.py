@@ -1,7 +1,7 @@
 from rest_framework import serializers, exceptions, viewsets
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
-from users.models import User, Woman_info
+from users.models import User, Woman_profile
 from django.contrib.auth.hashers import make_password
 
 from django.utils.encoding import force_str
@@ -105,9 +105,7 @@ class SetNewPasswordSerializer(serializers.Serializer):
        
 # woman info serializer
 class WomanProfileSerializer(serializers.ModelSerializer):
-     pass
-
-
-
-                 
+    class Meta:
+        model= Woman_profile
+        fields= '__all__'
               

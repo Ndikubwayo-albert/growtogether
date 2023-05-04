@@ -48,3 +48,28 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+class Woman_info(models.Model):
+    PREGNANCY_STATUS_CHOICE=[
+        ('Pregnant','P'),
+        ('NotPregnant','N')
+    ]
+    user_id= models.ForeignKey(User, on_delete= models.CASCADE)    
+    pregnant_times= models.IntegerField()
+    children= models.IntegerField()
+    pregnant_date= models.DateTimeField()
+    expected_birth= models.DateTimeField()
+    pregnancy_status= models.CharField(max_length= 64, choices= PREGNANCY_STATUS_CHOICE)
+
+    def __str__(self):
+        return self.user_id.first_name
+    
+class Address(models.Model):
+    user_id= models.ForeignKey(User, on_delete= models.CASCADE)
+    district= models.CharField(max_length= 128)
+    sector= models.CharField(max_length= 128)
+    cell= models.CharField(max_length= 128)
+    village= models.CharField(max_length= 128)
+
+    def __str__(self):
+        return self.user_id.first_name     
+

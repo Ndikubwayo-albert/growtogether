@@ -1,5 +1,5 @@
 from .serializers import (UserRegisterSerializer, ChangePasswordSerializer, RequestResetPasswordSerializer,
-                          SetNewPasswordSerializer,ReadUserSerializer )
+                          SetNewPasswordSerializer,ReadUserSerializer, WomanProfileSerializer )
 
 from django.contrib.auth import get_user_model, authenticate
 from .utils import Util
@@ -207,3 +207,5 @@ class SetNewPasswordApi(generics.GenericAPIView):
         return Response({'Success': True, 'Message':'Password reset successfully'}, status= status.HTTP_200_OK)  
                         
         
+class WomanProfileViewset(viewsets.ModelViewSet):
+     serializer_class= WomanProfileSerializer

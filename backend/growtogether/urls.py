@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+
+from rest_framework import permissions
 from rest_framework.authtoken.views import obtain_auth_token
 
 
@@ -26,6 +28,7 @@ urlpatterns = [
     path('auth/', obtain_auth_token),
     path('appointment/', include('appointment.urls')),
     
-    
+    path('api/doctor/', include('doctor.api.urls')),
+    path('api/receptionist/', include('receptionist.api.urls')),
 ]
     

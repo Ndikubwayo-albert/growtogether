@@ -1,6 +1,6 @@
 from django.urls import path, include
 from .views import (UserRegister, VerifyAccount, ChangePasswordApi, LoginApi, LogoutApi, RequestResetPasswordEmail,
-                    PasswordCheckTokenApi, SetNewPasswordApi)
+                    PasswordCheckTokenApi, SetNewPasswordApi,)
 
 from rest_framework.routers import DefaultRouter
 
@@ -21,5 +21,8 @@ urlpatterns = [
     path('accounts/resetpassword/<uidb64>/<token>/', PasswordCheckTokenApi.as_view(), name='password-reset-confirm'),
     path('accounts/resetpassword/', SetNewPasswordApi.as_view(), name='password-reset-done'),
     
+    # for woman_info
+    path('accounts/womaninfo/', SetNewPasswordApi.as_view(), name='password-reset-done'),
+
     
 ]

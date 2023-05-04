@@ -1,7 +1,7 @@
-from rest_framework import serializers, exceptions
+from rest_framework import serializers, exceptions, viewsets
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
-from users.models import User
+from users.models import User, Woman_info
 from django.contrib.auth.hashers import make_password
 
 from django.utils.encoding import force_str
@@ -9,13 +9,19 @@ from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from .utils import Util
 
+from rest_framework import serializers
+from django.contrib.auth import get_user_model
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.hashers import make_password
 
 UserModel = get_user_model()
 
 class UserRegisterSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = UserModel
-		fields = ['email','password', 'first_name','birthdate','last_name','phone','username']
+
+		fields = ['email','password', 'first_name''last_name','username']
+
 		extra_kwargs = {
 			'is_email_verified': {'read_only': True}
 		}  
@@ -37,6 +43,7 @@ class ReadUserSerializer(serializers.ModelSerializer):
 		fields =['email', 'first_name','last_name']
 		
 
+# serializers for dealing with account passwords 
 
 class ChangePasswordSerializer(serializers.Serializer):
     class Meta:
@@ -96,5 +103,11 @@ class SetNewPasswordSerializer(serializers.Serializer):
             raise exceptions.AuthenticationFailed({'Error':'The Reset link is invalid !' }, 401)
         
        
-            
+# woman info serializer
+class WomanProfileSerializer(serializers.ModelSerializer):
+     pass
+
+
+
+                 
               

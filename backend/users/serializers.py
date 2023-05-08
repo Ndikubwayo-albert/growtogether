@@ -1,7 +1,7 @@
 from rest_framework import serializers, exceptions, viewsets
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
-from users.models import User, Woman_profile
+from users.models import User
 from django.contrib.auth.hashers import make_password
 
 from django.utils.encoding import force_str
@@ -32,7 +32,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
      
 		user_obj = UserModel.objects.create(email=clean_data['email'],
                                       password= make_password(clean_data['password']),
-                                      username = clean_data['username'], 
+                                      username = clean_data['username'],
+                                      birthdate= clean_data['birthdate'], 
                                       first_name = clean_data['first_name'],
                                       last_name = clean_data['last_name'],
                                       is_active = False

@@ -6,11 +6,11 @@ from rest_framework.routers import DefaultRouter
 
 
 router= DefaultRouter()
-router.register('accounts', UserRegister, basename='accounts')
+router.register('registeruser', UserRegister, basename='accounts')
 
 urlpatterns = [ 
                
-    path('', include(router.urls)),    
+    path('accounts/', include(router.urls)),
     path('accounts/activateaccount/', VerifyAccount.as_view(), name='email-verify'),
     path('accounts/login/', LoginApi.as_view(), name='login'),
     path('accounts/logout/', LogoutApi.as_view(), name='logout'),    

@@ -13,18 +13,20 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.hashers import make_password
+from .models import Woman
 
 UserModel = get_user_model()
+class UserSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = UserModel
+		fields = ['username']
+
 
 class UserRegisterSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = UserModel
+		fields = ['email','password', 'first_name','last_name','username','is_active']
 
-		fields = ['email','password', 'first_name''last_name','username']
-
-		extra_kwargs = {
-			'is_email_verified': {'read_only': True}
-		}  
   
 	def create(self, clean_data):
      
@@ -33,8 +35,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
                                       username = clean_data['username'], 
                                       first_name = clean_data['first_name'],
                                       last_name = clean_data['last_name'],
-                                      birthdate = clean_data['birthdate'],
-                                      phone = clean_data['phone'])		  
+                                      is_active = False
+				      )		  
 		return user_obj
 
 class ReadUserSerializer(serializers.ModelSerializer):
@@ -60,7 +62,8 @@ class RequestResetPasswordSerializer(serializers.Serializer):
     email= serializers.EmailField(min_length= 2)
     class Meta:
         fields= ['email']        
-        
+
+      
 class SetNewPasswordSerializer(serializers.Serializer):
     newpassword= serializers.CharField(min_length=6, max_length= 64, write_only= True)
     uidb64= serializers.CharField(min_length= 1, write_only= True )
@@ -104,8 +107,35 @@ class SetNewPasswordSerializer(serializers.Serializer):
         
        
 # woman info serializer
-class WomanProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model= Woman_profile
-        fields= '__all__'
+# class WomanProfileSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model= Woman_profile
+#         fields= '__all__'
               
+class WomanProfileSerializer(serializers.Serializer):
+	birth_date = serializers.DateField(label="Birth Date")
+	phone = serializers.CharField(label='Phone', max_length=13)
+
+	def validate_phone(self, phone):
+		if phone.isdigit()==False:
+			raise serializers.ValidationError('Please Enter a valid Phone number!')
+		return phone
+	
+	def create(self, validated_data):
+		
+		new_woman = Woman.objects.create(birth_date=validated_data['birth_date'],
+				   phone=validated_data['phone'])
+		return new_woman
+	
+	def update(self, instance, validated_data):
+		instance.birth_date=validated_data.get('phone', instance.birth_date)
+		instance.phone = validated_data.get('phone', instance.phone)
+		instance.save()
+		return instance
+	
+class WriteProfileSerializer(serializers.ModelSerializer):
+    user =  serializers.HiddenField(default=serializers.CurrentUserDefault())
+    class Meta:
+        model = Woman
+        fields = ['birth_date', 'phone', 'user']
+		

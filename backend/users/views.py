@@ -1,5 +1,5 @@
 from .serializers import (UserRegisterSerializer, ChangePasswordSerializer, RequestResetPasswordSerializer,
-                          SetNewPasswordSerializer,ReadUserSerializer, WomanProfileSerializer )
+                          SetNewPasswordSerializer,ReadUserSerializer, WomanProfileSerializer, WriteProfileSerializer )
 
 from django.contrib.auth import get_user_model, authenticate
 from .utils import Util
@@ -15,7 +15,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, status, generics, viewsets
 from rest_framework.views import APIView
 from auto_tasks.auto_generate import auto_username_password_generator
-from .models import User, Woman_profile
+from .models import User, Woman
 
 from rest_framework.authtoken.models import Token
 from django.utils.encoding import smart_str, force_bytes,force_str, DjangoUnicodeDecodeError
@@ -72,8 +72,10 @@ class VerifyAccount(generics.GenericAPIView):
         try:
             payload= jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
             user= User.objects.get(id=payload['user_id'])
-            if not user.is_email_verified:
-                user.is_email_verified= True                             
+            encryptedpassword=request.GET.get('password')
+            
+            if not user.is_active:
+                user.is_active= True                             
                 user.save()
                 
                 current_site= get_current_site(request).domain 
@@ -206,6 +208,8 @@ class SetNewPasswordApi(generics.GenericAPIView):
         serializer.is_valid(raise_exception= True)        
         return Response({'Success': True, 'Message':'Password reset successfully'}, status= status.HTTP_200_OK)  
                         
+class CreateWomenProfileView(APIView):
+    pass
         
 class WomanProfileAPIView(APIView):
     permission_classes = [IsAuthenticated, ]

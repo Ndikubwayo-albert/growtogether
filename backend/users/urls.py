@@ -1,8 +1,14 @@
 from django.urls import path, include
-from .views import (UserRegister, VerifyAccount, ChangePasswordApi, LoginApi, LogoutApi, RequestResetPasswordEmail,
-                    PasswordCheckTokenApi, SetNewPasswordApi, WomanProfileAPIView)
+from .views import (UserRegister, VerifyAccount,
+RequestResetPasswordEmail, PasswordCheckTokenApi, SetNewPasswordApi, 
+                     ChangePasswordApi, 
+                     LoginApi, LogoutApi,
+                    WomanProfileAPIView,
+                     CreateWomenProfileView,
+                      )
 
 from rest_framework.routers import DefaultRouter
+
 
 
 router= DefaultRouter()
@@ -22,7 +28,15 @@ urlpatterns = [
     path('accounts/resetpassword/', SetNewPasswordApi.as_view(), name='password-reset-done'),
     
     # for woman_info
-    path('accounts/womanprofile/', WomanProfileAPIView.as_view() ),
+    path('profile/', WomanProfileAPIView.as_view(), name='api_woman_profile'), 
+    path('create_profile/',CreateWomenProfileView.as_view(), name='create_profile'),
+
+    
+    #changing password not working on confirming passwd field      
+    path('changepassword/', ChangePasswordApi.as_view(), name='changepassword'),
+    
+    
+   
 
     
 ]

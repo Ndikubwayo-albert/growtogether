@@ -15,6 +15,7 @@ class User(AbstractUser):
     birthdate = models.DateField(null= True)
     phone = models.CharField(max_length=13, null= True) 
     is_email_verified = models.BooleanField(default=False, blank=True)
+    forget_password_token = models.CharField(max_length=200, null=True, blank=True)
             
     def is_doctor(self):
         if self.user_type == 'D':
@@ -47,6 +48,14 @@ class User(AbstractUser):
         
     def __str__(self):
         return self.username
+    
+class Woman(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    birth_date = models.DateField()
+    phone = models.CharField(max_length=13)
+
+    def __str__(self):
+        return f'{self.user.first_name} {self.user.last_name}'
 
 class Woman_profile(models.Model):
     PREGNANCY_STATUS_CHOICE=[

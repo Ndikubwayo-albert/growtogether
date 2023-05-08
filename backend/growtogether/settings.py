@@ -1,7 +1,6 @@
 from pathlib import Path
 import os
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -36,6 +35,8 @@ INSTALLED_APPS = [
     'receptionist',
     'django_celery_results',
     'django_celery_beat',
+    'rest_framework_swagger',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -119,9 +120,9 @@ USE_L10N = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'staticfiles')]
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+# STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # STATICFILES_STORAGE="whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
@@ -142,7 +143,8 @@ REST_FRAMEWORK= {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
        
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 
 
@@ -153,8 +155,8 @@ AUTH_USER_MODEL = 'users.User'
 EMAIL_USE_TLS= True
 EMAIL_HOST= 'smtp.gmail.com'
 EMAIL_PORT= 587
-EMAIL_HOST_USER= 'ndialbert45@gmail.com'
-EMAIL_HOST_PASSWORD= 'vvwutvhyfcuulkum'
+EMAIL_HOST_USER= 'classmate2k20@gmail.com'
+EMAIL_HOST_PASSWORD= 'bdybskxyjafqdyhr'
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

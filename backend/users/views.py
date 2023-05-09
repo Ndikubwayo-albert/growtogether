@@ -215,7 +215,7 @@ class WomanProfileAPIView(APIView):
     permission_classes = [IsAuthenticated, ]
 
     def get(self, request, format=None):
-        profile = Woman_profile.objects.all()
+        profile = Woman.objects.all()
         serializer= WomanProfileSerializer(profile, many= True)
         return Response(serializer.data)
         

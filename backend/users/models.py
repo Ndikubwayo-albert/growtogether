@@ -12,7 +12,8 @@ USER_CHOICES = [
 ]
 class User(AbstractUser):
     user_type = models.CharField(max_length=3, choices=USER_CHOICES, default='W')
-    birthdate = models.DateField(null= True)            
+    birthdate = models.DateField(null= True)
+                
     def is_doctor(self):
         if self.user_type == 'D':
             return True

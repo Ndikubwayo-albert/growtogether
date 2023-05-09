@@ -4,7 +4,7 @@ RequestResetPasswordEmail, PasswordCheckTokenApi, SetNewPasswordApi,
                      ChangePasswordApi, 
                      LoginApi, LogoutApi,
                     WomanProfileAPIView,
-                     CreateWomenProfileView,
+                    CreateWomenProfileView,
                       )
 
 from rest_framework.routers import DefaultRouter
@@ -30,12 +30,7 @@ urlpatterns = [
     # for woman_info
     path('profile/', WomanProfileAPIView.as_view(), name='api_woman_profile'), 
     path('create_profile/',CreateWomenProfileView.as_view(), name='create_profile'),
-
-    
-    #changing password not working on confirming passwd field      
-    path('changepassword/', ChangePasswordApi.as_view(), name='changepassword'),
-    
-    
+ 
    
 
     

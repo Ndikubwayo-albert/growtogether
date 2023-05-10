@@ -211,6 +211,9 @@ class SetNewPasswordApi(generics.GenericAPIView):
 class CreateWomenProfileView(APIView):
     pass
         
+
+
+        
 class WomanProfileAPIView(APIView):
     permission_classes = [IsAuthenticated, ]
 

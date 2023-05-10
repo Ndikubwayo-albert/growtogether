@@ -54,7 +54,7 @@ class Woman(models.Model):
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
 
-# class Woman_profile(models.Model):
+# class Woman_info(models.Model):
 #     PREGNANCY_STATUS_CHOICE=[
 #         ('Pregnant','yes'),
 #         ('Not Pregnant','no')
@@ -65,6 +65,7 @@ class Woman(models.Model):
 #     pregnant_date= models.DateField()
 #     giving_birth= models.DateField()
 #     pregnancy_status= models.CharField(max_length= 64, choices= PREGNANCY_STATUS_CHOICE)
+#address
 
 #     def __str__(self):
 #         return self.user_id.first_name

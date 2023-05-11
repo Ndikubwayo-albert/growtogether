@@ -1,3 +1,4 @@
+
 import requests
 import random
 from django.template.response import TemplateResponse
@@ -13,13 +14,13 @@ url = 'https://api.pindo.io/v1/sms/'
 # print(response)
 # print(response.json())
 
+
 def send_sms(request, phone):
-	text = f'Hello albert, Konti yanyu kuri GrowTogetherSystem yemejwe neza.'
+	text = f'Hi, Welcome to growtogether system.'
 	data = {
         'to':str(phone), 
         'text':text,
-        'sender': '_GrowTogetherSystem_'
-        }
+        'sender': 'GROWTOGETHER'
+                }
 	response = requests.post(url, json=data, headers=headers)
- 
 	return response

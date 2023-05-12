@@ -16,11 +16,12 @@ from rest_framework.routers import DefaultRouter
 
 
 router= DefaultRouter()
-router.register('registeruser', UserRegister, basename='users')
+# router.register('registeruser', UserRegister, basename='users')
 router.register('appointment', WomanAppointmentViewset, basename='appointment')
 
 urlpatterns = [ 
-               
+
+     path('users/', UserRegister.as_view(), name="userregister"),          
     path('users/', include(router.urls)),
     path('users/activateaccount/', VerifyAccount.as_view(), name='email-verify'),
     path('users/login/', LoginApi.as_view(), name='login'),

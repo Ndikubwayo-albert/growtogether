@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .serializers import ReadOnlyAppointmentSerializer, ReadOnlyCheckupSerializer, ReadOnlyVaccinationSerializer
 from rest_framework import generics, permissions
-from .models import SemesterAppointment, Checkup,Vaccination
+from .models import SemesterAppointment,Vaccination
 from .tasks import vaccination_remender_email_task
 from django.http import JsonResponse
 

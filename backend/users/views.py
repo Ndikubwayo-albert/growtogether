@@ -30,6 +30,7 @@ from appointment.models import (Appointment, SemesterAppointment, Vaccination)
 from rest_framework.authtoken.models import Token
 
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import mixins
 
 #for phone messages
 from lib.pindo import send_sms
@@ -39,23 +40,24 @@ UserModel= get_user_model()
 # Create your views here.
 
 
-class UserRegister(viewsets.ViewSet):
+class UserRegister( generics.GenericAPIView):
+    serializer_class= UserRegisterSerializer
     permission_classes = [IsAdminUser, IsAuthenticated]
     
     @swagger_auto_schema(
-        operation_summary= "All registered users.",
+        operation_summary= "For listing all registered users.",
         operation_description= "This is endpoint for listing all registered users."
     ) 
-    def list(self, request):
+    def get(self, request, *args, **kwargs):
         all_users= User.objects.all()
         serializer= ReadUserSerializer(all_users, many= True) 
         return Response(serializer.data)
 
     @swagger_auto_schema(
-            operation_summary= "Creating new user account.",
+            operation_summary= "For creating new user account.",
             operation_description= "This is endpoint for registering new user account."
         ) 
-    def create(self, request):
+    def post(self, request, *args, **kwargs): 
         if User.is_receptionist or User.is_HR:
                         
             clean_data = auto_username_password_generator(request.data)
@@ -82,7 +84,8 @@ class UserRegister(viewsets.ViewSet):
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
     
-class VerifyAccount(generics.GenericAPIView):
+class VerifyAccount(APIView):
+
     def get(self, request):
         token= request.GET.get('token') 
         
@@ -104,8 +107,7 @@ class VerifyAccount(generics.GenericAPIView):
                     'email_body': email_body,
                     'to_email': user.email,
                     'email_subject': 'Login into your Growtogether account.'}
-                Util.send_email(data)
-                # send_sms(request, user.phone)                
+                Util.send_email(data)                
             return Response({'Email is Verified': 'Your Account is successfully activated! -- Growtogether system'}, status= status.HTTP_200_OK)
         
         except jwt.ExpiredSignatureError as identifier:
@@ -114,7 +116,8 @@ class VerifyAccount(generics.GenericAPIView):
             return Response({'It\'s an Error':'Invalid token!'}, status= status.HTTP_400_BAD_REQUEST)
     
 
-class LoginApi(APIView):
+class LoginApi(generics.GenericAPIView):
+    serializer_class= UserRegisterSerializer
     permission_classes= [AllowAny, ]
             
     def post(self, request):
@@ -204,7 +207,8 @@ class RequestResetPasswordEmail(generics.GenericAPIView):
             return Response({'Email sent': 'We sent you an email with reset password link.' })                
         return Response({'Error': 'Account with this email not found!' })
     
-class PasswordCheckTokenApi(generics.GenericAPIView):
+class PasswordCheckTokenApi(APIView):
+    
     def get(self, request, uidb64, token):
         try:
             id= smart_str(urlsafe_base64_decode(uidb64))

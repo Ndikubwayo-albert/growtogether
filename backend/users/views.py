@@ -43,6 +43,9 @@ UserModel= get_user_model()
 class UserRegister( generics.GenericAPIView):
     serializer_class= UserRegisterSerializer
     permission_classes = [IsAdminUser, IsAuthenticated]
+
+    def get_queryset(self):
+        return User.objects.all()
     
     @swagger_auto_schema(
         operation_summary= "For listing all registered users.",

@@ -41,7 +41,6 @@ class Appointment(models.Model):
         (Colon_and_Rectal_Surgeons,'Colon and Rectal Surgeons')
     ]
     date = models.DateField()
-    time = models.TimeField()
     status = models.CharField(choices=[('Pending', 'Pending'), ('Completed', 'Completed')], max_length=10)
     woman = models.ForeignKey(User, on_delete=models.CASCADE)
     department = models.CharField(max_length=20, choices=department_choices)

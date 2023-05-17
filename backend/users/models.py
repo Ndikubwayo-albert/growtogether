@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 USER_CHOICES = [
+
     ('D', 'Doctor'),
     ('W', 'Woman'),
     ('R', 'Receptionist'),
@@ -12,8 +13,9 @@ USER_CHOICES = [
 ]
 class User(AbstractUser):
     user_type = models.CharField(max_length=3, choices=USER_CHOICES, default='W')
-    birthdate = models.DateField(null= True)
-                
+    birth_date = models.DateField(null=True, blank=True)
+    phone = models.CharField(max_length=13, null=True, blank=True)
+            
     def is_doctor(self):
         if self.user_type == 'D':
             return True
@@ -54,21 +56,6 @@ class Woman(models.Model):
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
 
-# class Woman_info(models.Model):
-#     PREGNANCY_STATUS_CHOICE=[
-#         ('Pregnant','yes'),
-#         ('Not Pregnant','no')
-#     ]
-#     user_id= models.ForeignKey(User, on_delete= models.CASCADE)    
-#     pregnant_times= models.IntegerField()
-#     children= models.IntegerField()
-#     pregnant_date= models.DateField()
-#     giving_birth= models.DateField()
-#     pregnancy_status= models.CharField(max_length= 64, choices= PREGNANCY_STATUS_CHOICE)
-#address
-
-#     def __str__(self):
-#         return self.user_id.first_name
     
 class Address(models.Model):
     user_id= models.ForeignKey(User, on_delete= models.CASCADE)

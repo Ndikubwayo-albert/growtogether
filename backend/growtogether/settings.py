@@ -36,18 +36,12 @@ INSTALLED_APPS = [
 
     # Project Apps
     'users',
-    'appointment',
-    'doctor',
-    'receptionist',
-    'hospitalAdmin',
+    'doctors',
 
     #Rest_framework
     'rest_framework',    
     'rest_framework.authtoken',
 
-    # Celery
-    'django_celery_results',
-    'django_celery_beat',
 
     # Drf_yasg
     'drf_yasg',
@@ -56,9 +50,10 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # cors headers middleware
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "corsheaders.middleware.CorsPostCsrfMiddleware", # cors
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -180,30 +175,20 @@ EMAIL_HOST_PASSWORD= os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 
-# Celery settings
-
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_BACKEND = 'django-db'
-
-#CELERY BEAT
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-
-
-
-CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:8000',
-    'https://growtogether-production.up.railway.app',
-
-]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://growtogether-production.up.railway.app',
+    'http://localhost:3000',
+]
+
+
+CORS_ORIGIN_WHITELIST = [
+    'https://growtogether-production.up.railway.app',
+    'http://localhost:3000',
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-
-
+# SECURE_SCHEMES = ['https', 'http']
+# SECURE_SSL_REDIRECT = True
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

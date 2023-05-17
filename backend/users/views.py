@@ -3,13 +3,9 @@ from .serializers import (UserRegisterSerializer,
                           RequestResetPasswordSerializer,
                           SetNewPasswordSerializer,
 
-                          ReadUserSerializer, 
-                          WomanProfileSerializer,
-                          WriteProfileSerializer,
-                          ReadSemesterAppointmentSerializer,
-                          ReadVaccinationSerializer,
-                          WriteAppointmentSerializer,
-                          ReadAppointmentSerializer)
+                          ReadUserSerializer
+)
+
 from django.contrib.auth import get_user_model, authenticate
 from .utils import Util
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
@@ -24,44 +20,41 @@ from rest_framework.response import Response
 from rest_framework import permissions, status, generics, viewsets
 from rest_framework.views import APIView
 from auto_tasks.auto_generate import auto_username_password_generator
-from .models import User, Woman
-from appointment.models import (Appointment, SemesterAppointment, Vaccination)
 
 from rest_framework.authtoken.models import Token
 
-from drf_yasg.utils import swagger_auto_schema
-from rest_framework import mixins
 
 #for phone messages
 from lib.pindo import send_sms
+from drf_yasg.utils import swagger_auto_schema
 
-UserModel= get_user_model()
+
+User= get_user_model()
 
 # Create your views here.
 
 
-class UserRegister( generics.GenericAPIView):
-    serializer_class= UserRegisterSerializer
-    permission_classes = [IsAdminUser, IsAuthenticated]
-
-    def get_queryset(self):
-        return User.objects.all()
-    
+class UserRegister(viewsets.ViewSet):
+    permission_classes = []
     @swagger_auto_schema(
-        operation_summary= "For listing all registered users.",
-        operation_description= "This is endpoint for listing all registered users."
-    ) 
-    def get(self, request, *args, **kwargs):
-        all_users= User.objects.all()
+        tags=['user action'],
+        operation_description='List of all user in system',
+
+    )
+    def list(self, request):
+        all_users= User.objects.filter(user_type='W')
         serializer= ReadUserSerializer(all_users, many= True) 
         return Response(serializer.data)
-
+    
     @swagger_auto_schema(
-            operation_summary= "For creating new user account.",
-            operation_description= "This is endpoint for registering new user account."
-        ) 
-    def post(self, request, *args, **kwargs): 
-        if User.is_receptionist or User.is_HR:
+        request_body=UserRegisterSerializer,
+        tags=['user action'],
+        operation_description='This help to register Women',
+
+    )
+  
+    def post(self, request):
+        if User.is_doctor:
                         
             clean_data = auto_username_password_generator(request.data)
             serializer = UserRegisterSerializer(data=clean_data)
@@ -122,6 +115,13 @@ class VerifyAccount(APIView):
 class LoginApi(generics.GenericAPIView):
     serializer_class= UserRegisterSerializer
     permission_classes= [AllowAny, ]
+
+    permission_classes = []
+    @swagger_auto_schema(
+        tags=['user action'],
+        operation_description='user Login in system',
+
+    )
             
     def post(self, request):
         username= request.data.get('username')
@@ -130,17 +130,24 @@ class LoginApi(generics.GenericAPIView):
         
         if user:
             if user.is_active:
-                token, created= Token.objects.get_or_create(user= user)
-                response= {
+                if user.user_type == "W":
+                    token, created= Token.objects.get_or_create(user= user)
+                    response= {
                     'Message':'Logged in successfully',
                     'Token': token.key
                 }
-                return Response(data= response)
+                    return Response(data= response)
+                return Response(data= {'Message':'You are not allowed to Login as Woman'},status= status.HTTP_401_UNAUTHORIZED)
             else:
                 return Response(data= {'Message':'Account is not allowed'}, status= status.HTTP_401_UNAUTHORIZED)
         else:
             return Response(data= {'Message':'Invalid credentials'},status= status.HTTP_401_UNAUTHORIZED)
-         
+    permission_classes = []
+
+    @swagger_auto_schema(
+        tags=['user action'],
+
+    )   
     def get(self, request):
         content= {'user': str(request.user), 'auth':str(request.auth)}
         return Response(data= content, status= status.HTTP_200_OK)
@@ -148,10 +155,22 @@ class LoginApi(generics.GenericAPIView):
 class LogoutApi(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes= [TokenAuthentication]
+
+    permission_classes = []
+    @swagger_auto_schema(
+        tags=['user action'],
+
+    )
     
     def get(self, request):
         content= {'user': str(request.user), 'auth':str(request.auth)}
         return Response(data= content, status= status.HTTP_200_OK)
+    
+
+    @swagger_auto_schema(
+        tags=['user action'],
+
+    )
         
     def post(self, request, format=None):
         request.auth.delete()
@@ -159,7 +178,7 @@ class LogoutApi(APIView):
     
         
 class ChangePasswordApi(generics.UpdateAPIView):
-    model= UserModel
+    model= User
     serializer_class= ChangePasswordSerializer
     permission_classes= [IsAuthenticated, ]    
         
@@ -237,67 +256,3 @@ class CreateWomenProfileView(APIView):
     pass
  
 
-class WomanProfileView(APIView):
-    """"API endpoint for Woman profile view/update-- Only accessble by patients"""
-    permission_classes = [IsAuthenticated]
-
-
-    def get(self, request, format=None):
-        user = request.user
-        profile = Woman.objects.filter(user=user).get()
-        userSerializer=UserRegisterSerializer(user)
-        profileSerializer = WomanProfileSerializer(profile)
-        return Response({
-            'user_data':userSerializer.data,
-            'profile_data':profileSerializer.data
-
-        }, status=status.HTTP_200_OK)
-
-    def put(self, request, format=None):
-        user = request.user
-        profile = Woman.objects.filter(user=user).get()
-        profileSerializer = WomanProfileSerializer(
-            instance=profile, data=request.data.get('profile_data'), partial=True)
-        if profileSerializer.is_valid():
-            profileSerializer.save()
-            return Response({
-                'profile_data':profileSerializer.data
-            }, status=status.HTTP_200_OK)
-        return Response({
-                'profile_data':profileSerializer.errors
-            }, status=status.HTTP_400_BAD_REQUEST)
-    
-class CreateWomenProfileView(APIView):
-    def post(self, request, format=None):
-        serializer = WriteProfileSerializer(data=request.data ,context={'request': request})
-        if serializer.is_valid():
-            user_profile= serializer.save(user=request.user)
-            data = serializer.data
-            data['user'] = user_profile.user.username
-
-            phone= str(user_profile.phone)
-            if phone:
-                print(f"phone: {phone}")
-                send_sms(self, request, phone)
-
-            return Response({'data':serializer.data}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-class WomanAppointmentViewset(viewsets.ModelViewSet):
-    def get_queryset(self):
-        return Appointment.objects.filter(woman=self.request.user)
-    def get_serializer_class(self):
-        if self.action in ('list', 'retrieve'):
-            return ReadAppointmentSerializer
-        return WriteAppointmentSerializer
-    
-class SemesterAppointmentAPIView(generics.ListAPIView):
-    serializer_class = ReadSemesterAppointmentSerializer
-    def get_queryset(self):
-        return SemesterAppointment.objects.filter(user=self.request.user)
-    
-class VaccinationAPIView(generics.ListAPIView):
-    serializer_class=ReadVaccinationSerializer
-
-    def get_queryset(self):
-        return Vaccination.objects.filter(user=self.request.user)

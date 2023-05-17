@@ -44,10 +44,29 @@ def auto_username_password_generator(data):
         last_name = names[1]
     else:
         last_name = f'{names[1]} {names[2]}'
+     
     data["first_name"] = first_name
     data["last_name"] = last_name
     data["username"] = generate_username()
     data["password"] = generate_password(first_name)
-    del data["full_name"]
     
+    del data["full_name"]
+
+    
+    return data
+
+
+
+
+def fullname_generator(data):
+    names = data['full_name'].split(' ')
+    first_name = names[0]
+    if len(names) == 1:
+        last_name = "XXX"
+    elif len(names) == 2:
+        last_name = names[1]
+    else:
+        last_name = f'{names[1]} {names[2]}'
+    data["first_name"] = first_name
+    data["last_name"] = last_name
     return data
